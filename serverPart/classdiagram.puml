@@ -1,0 +1,547 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class main.java.serverPart.BuilderPart.ProductBuilder {
+~ Product result
++ void reset()
++ Product getResult()
++ void setId(int)
++ void setName(String)
++ void setStatus(String)
++ void setDescription(String)
++ void setFloat(Float)
++ void setDate(String)
++ void setProduct(ArrayList<Product>)
++ void setChecks(ArrayList<Check>)
++ void setPersonalData(String,String,String)
++ void setTable(ArrayList<Table>)
++ void setDish(ArrayList<Dish>)
++ void setEmployee(ArrayList<Employee>)
++ void setMenu(ArrayList<Menu>)
++ void setReserve(ArrayList<Reserve>)
++ void setInt(int)
+}
+class main.java.serverPart.tables.SupSec {
++ ArrayList<Table> return_all_list(String)
+- ArrayList<OneTable> create_filter(String,ArrayList<OneTable>)
+- ArrayList<OneTable> filter_by_status(String,ArrayList<OneTable>)
+- ArrayList<OneTable> filter_by_amount(int,ArrayList<OneTable>)
+- ArrayList<OneTable> create_list()
+}
+class main.java.serverPart.Specification.NotSpecification {
+- Specification<T> spec
++ boolean isSatisfiedBy(T)
+}
+class main.java.serverPart.dataBase.DataBase {
+~ {static} String dbName
+~ {static} String serverip
+~ {static} String serverport
+~ {static} String url
+~ {static} String driver
+- {static} Connection conn
++ {static} Connection connectDB()
++ {static} void closeConnection()
+}
+class main.java.serverPart.specificationConcret.DoneStatusCheckSpecification {
++ boolean isSatisfiedBy(Check)
+}
+class main.java.serverPart.Objects.Check {
++ int id
++ String date_time
++ Table table
++ Employee employee
++ Float sum
++ String status
++ ArrayList<Dish> dish_list
+}
+class main.java.serverPart.BuilderPart.CheckBuilder {
+~ Check result
++ void reset()
++ Check getResult()
++ void setId(int)
++ void setStatus(String)
++ void setEmployee(ArrayList<Employee>)
++ void setTable(ArrayList<Table>)
++ void setDate(String)
++ void setFloat(Float)
++ void setDish(ArrayList<Dish>)
++ void setChecks(ArrayList<Check>)
++ void setName(String)
++ void setDescription(String)
++ void setProduct(ArrayList<Product>)
++ void setMenu(ArrayList<Menu>)
++ void setReserve(ArrayList<Reserve>)
++ void setPersonalData(String,String,String)
++ void setInt(int)
+}
+class main.java.serverPart.BuilderPart.EmployeeBuilder {
+~ Employee result
++ void reset()
++ Employee getResult()
++ void setId(int)
++ void setPersonalData(String,String,String)
++ void setStatus(String)
++ void setDescription(String)
++ void setDate(String)
++ void setFloat(Float)
++ void setChecks(ArrayList<Check>)
++ void setName(String)
++ void setProduct(ArrayList<Product>)
++ void setTable(ArrayList<Table>)
++ void setDish(ArrayList<Dish>)
++ void setEmployee(ArrayList<Employee>)
++ void setMenu(ArrayList<Menu>)
++ void setReserve(ArrayList<Reserve>)
++ void setInt(int)
+}
+class main.java.serverPart.specificationConcret.FreeTableScecification {
+- ArrayList<Reserve> reserve
+- String date
++ boolean isSatisfiedBy(Table)
+}
+class main.java.serverPart.Specification.OrSpecification {
+- Set<Specification<T>> set
++ boolean isSatisfiedBy(T)
++ AbstractSpecification<T> or(Specification<T>)
+}
+class main.java.serverPart.BuilderPart.Director {
+~ Builder builder
++ InnerData innerData
++ void changeBuilder(Builder)
++ void make(String)
+}
+class main.java.serverPart.BuilderPart.Director.InnerData {
++ int id
++ String name
++ String status
++ String desc
++ String email
++ String phone
++ ArrayList<Product> product
++ ArrayList<Table> table
++ ArrayList<Dish> dish
++ ArrayList<Menu> menu
++ ArrayList<Employee> empl
++ ArrayList<Reserve> reserve
++ ArrayList<Check> checks
++ String date
++ Float amountF
++ int amountI
+}
+class main.java.serverPart.specificationConcret.NotOkProductSpecification {
++ boolean isSatisfiedBy(Product)
+}
+class main.java.serverPart.BuilderPart.RestoranBuilder {
+~ Restoran result
++ void reset()
++ Restoran getResult()
++ void setPersonalData(String,String,String)
++ void setStatus(String)
++ void setProduct(ArrayList<Product>)
++ void setTable(ArrayList<Table>)
++ void setDish(ArrayList<Dish>)
++ void setEmployee(ArrayList<Employee>)
++ void setMenu(ArrayList<Menu>)
++ void setReserve(ArrayList<Reserve>)
++ void setChecks(ArrayList<Check>)
++ void setId(int)
++ void setDate(String)
++ void setDescription(String)
++ void setFloat(Float)
++ void setName(String)
++ void setInt(int)
+}
+class main.java.serverPart.BuilderPart.ReserveBuilder {
+~ Reserve result
++ void reset()
++ Reserve getResult()
++ void setId(int)
++ void setStatus(String)
++ void setDescription(String)
++ void setDate(String)
++ void setPersonalData(String,String,String)
++ void setTable(ArrayList<Table>)
++ void setName(String)
++ void setDish(ArrayList<Dish>)
++ void setFloat(Float)
++ void setChecks(ArrayList<Check>)
++ void setEmployee(ArrayList<Employee>)
++ void setProduct(ArrayList<Product>)
++ void setMenu(ArrayList<Menu>)
++ void setReserve(ArrayList<Reserve>)
++ void setInt(int)
+}
+class main.java.serverPart.tables.OneTable {
+~ String status_in_moment
+~ String description
+~ int size
+~ int id
++ OneTable setTable(String,String,int,int)
+}
+class main.java.serverPart.Server {
++ {static} void main(String[])
+}
+class main.java.serverPart.BuilderPart.TableBuilder {
+~ Table result
++ void reset()
++ Table getResult()
++ void setId(int)
++ void setStatus(String)
++ void setDescription(String)
++ void setName(String)
++ void setInt(int)
++ void setDate(String)
++ void setTable(ArrayList<Table>)
++ void setChecks(ArrayList<Check>)
++ void setProduct(ArrayList<Product>)
++ void setDish(ArrayList<Dish>)
++ void setMenu(ArrayList<Menu>)
++ void setReserve(ArrayList<Reserve>)
++ void setEmployee(ArrayList<Employee>)
++ void setPersonalData(String,String,String)
++ void setFloat(Float)
+}
+abstract class main.java.serverPart.Specification.AbstractSpecification {
++ {abstract}boolean isSatisfiedBy(T)
++ AbstractSpecification<T> or(Specification<T>)
++ AbstractSpecification<T> and(Specification<T>)
++ AbstractSpecification<T> not()
+}
+class main.java.serverPart.BuilderPart.MenuBuilder {
+~ Menu result
++ void reset()
++ Menu getResult()
++ void setId(int)
++ void setStatus(String)
++ void setDate(String)
++ void setDish(ArrayList<Dish>)
++ void setName(String)
++ void setFloat(Float)
++ void setChecks(ArrayList<Check>)
++ void setEmployee(ArrayList<Employee>)
++ void setTable(ArrayList<Table>)
++ void setDescription(String)
++ void setProduct(ArrayList<Product>)
++ void setMenu(ArrayList<Menu>)
++ void setReserve(ArrayList<Reserve>)
++ void setPersonalData(String,String,String)
++ void setInt(int)
+}
+class main.java.serverPart.specificationConcret.ProductInNextMenuSpecification {
+~ ArrayList<Menu> menu
++ boolean isSatisfiedBy(Product)
+}
+class main.java.serverPart.specificationConcret.MenuSpecification {
+- String date
++ boolean isSatisfiedBy(Menu)
+}
+class main.java.serverPart.Handlers.Handlers {
+}
+class main.java.serverPart.Handlers.Handlers.PriceListHandler {
++ void handle(HttpExchange)
++ String createResponce(List<Table>)
+}
+class main.java.serverPart.Handlers.Handlers.DetailsHandler {
++ void handle(HttpExchange)
+- String handleGetRequest(HttpExchange)
+}
+class main.java.serverPart.Handlers.Handlers.SearchHandler {
++ void handle(HttpExchange)
+}
+class main.java.serverPart.Handlers.Handlers.LoginHandler {
++ void handle(HttpExchange)
+}
+class main.java.serverPart.Handlers.Handlers.RegisterHandler {
++ void handle(HttpExchange)
+}
+class main.java.serverPart.Handlers.Handlers.TableHandler {
++ void handle(HttpExchange)
+}
+class main.java.serverPart.Handlers.Handlers.DishHandler {
++ void handle(HttpExchange)
+}
+class main.java.serverPart.Handlers.Handlers.ChecksHandler {
++ void handle(HttpExchange)
+}
+class main.java.serverPart.Handlers.Handlers.ReserveHandler {
++ void handle(HttpExchange)
+}
+class main.java.serverPart.Handlers.Handlers.ReserveSetHandler {
++ void handle(HttpExchange)
+}
+class main.java.serverPart.Handlers.Handlers.ProductHandler {
++ void handle(HttpExchange)
+}
+class main.java.serverPart.Handlers.Handlers.ProductListHandler {
++ void handle(HttpExchange)
+}
+class main.java.serverPart.Handlers.Handlers.ReserveNextHandler {
++ void handle(HttpExchange)
+}
+class main.java.serverPart.Handlers.Handlers.DayBillsHandler {
++ void handle(HttpExchange)
+}
+class main.java.serverPart.Handlers.Handlers.MenuHandler {
++ void handle(HttpExchange)
+}
+class main.java.serverPart.Objects.Menu {
++ int id
++ Dish dish
++ String date
++ String status
+}
+class main.java.serverPart.specificationConcret.CheksDateSpecification {
+~ String date
++ boolean isSatisfiedBy(Check)
+}
+class main.java.serverPart.specificationConcret.WitersChecksSpecification {
+- int id
++ boolean isSatisfiedBy(Check)
+}
+class main.java.serverPart.Objects.Reserve {
++ int id
++ Table table
++ String date_time
++ String time_along
++ String phone
++ String full_name
++ String special_description
+}
+class main.java.serverPart.Objects.Restoran {
++ ArrayList<Menu> today_menu
++ String status_in_moment
++ ArrayList<Check> all_checks
++ ArrayList<Employee> all_employees
++ ArrayList<Table> all_tables
++ ArrayList<Dish> all_dishes
++ ArrayList<Reserve> all_reserves
++ ArrayList<Product> all_products
+}
+class main.java.serverPart.Objects.Product {
++ int id
++ String name
++ String pr_type
++ String status
++ Float amount
+}
+class main.java.serverPart.Handlers.Helper {
++ {static} void handleResponce(HttpExchange,Object)
++ {static} String getJSON(Object)
++ {static} String parseRequest(HttpExchange)
++ {static} Map<String,Object> getFromJSON(String)
++ {static} String handleGetRequest(HttpExchange)
+}
+class main.java.serverPart.Handlers.LocalData {
++ {static} ArrayList<Employee> getEmploye(String,Restoran)
++ {static} String CreateNewEmploye(String,Restoran)
++ {static} ArrayList<Table> getallTables(Restoran)
++ {static} ArrayList<Reserve> getReserve(Restoran)
++ {static} ArrayList<Dish> getDishes(Restoran)
++ {static} ArrayList<Table> getFreeTable(String,Restoran)
++ {static} ArrayList<Product> getAllProducts(Restoran)
++ {static} String createNewProduct(String,Restoran)
++ {static} String createNewDish(String,Restoran)
++ {static} String updateDish(String,Restoran)
++ {static} String deleteReserve(Restoran,String)
++ {static} ArrayList<Menu> getTodayMenu(String,Restoran)
++ {static} String createNewReserve(String,Restoran)
++ {static} String updateMenuData(String,Restoran)
++ {static} String updateProduct(String,Restoran)
++ {static} String setNextMenu(String,Restoran)
++ {static} ArrayList<Check> getChecks(String,Restoran)
++ {static} String createNewCheck(String,Restoran)
++ {static} String updateCheck(String,Restoran)
++ {static} ArrayList<Product> getProductList(Restoran)
++ {static} ArrayList<Reserve> getReserveList(String,Restoran)
++ {static} ArrayList<Check> getCheckList(String,Restoran)
+~ {static} ArrayList<T> applySpecified(ArrayList<T>,Specification<T>)
+}
+class main.java.serverPart.BuilderPart.DishBuilder {
+~ Dish result
++ void reset()
++ Dish getResult()
++ void setId(int)
++ void setName(String)
++ void setStatus(String)
++ void setDescription(String)
++ void setFloat(Float)
++ void setProduct(ArrayList<Product>)
++ void setDate(String)
++ void setChecks(ArrayList<Check>)
++ void setPersonalData(String,String,String)
++ void setTable(ArrayList<Table>)
++ void setDish(ArrayList<Dish>)
++ void setEmployee(ArrayList<Employee>)
++ void setMenu(ArrayList<Menu>)
++ void setReserve(ArrayList<Reserve>)
++ void setInt(int)
+}
+class main.java.serverPart.Objects.Dish {
++ int id
++ String name
++ String description
++ Float price
++ String dish_type
++ ArrayList<Product> products_list
+}
+class main.java.serverPart.Facade {
++ {static} Restoran rest
++ {static} void setDBConnection()
++ {static} Restoran setRestoran()
++ {static} void StartServer(String,int,Restoran)
+}
+class main.java.serverPart.Facade.RestoranFacade {
++ {static} Restoran setRestoranData()
++ {static} Restoran getRestoran(Director,RestoranBuilder,ArrayList<Product>,ArrayList<Dish>,ArrayList<Menu>,ArrayList<Employee>,ArrayList<Table>,ArrayList<Reserve>,ArrayList<Check>)
++ {static} ArrayList<Product> getAllProducts(Director,ProductBuilder)
++ {static} ArrayList<Dish> getAllDish(Director,DishBuilder,ArrayList<Product>)
++ {static} ArrayList<Product> filterPr(ArrayList<Product>,ArrayList<Integer>,int)
++ {static} ArrayList<Menu> getAllMenu(Director,MenuBuilder,ArrayList<Dish>)
++ {static} ArrayList<Employee> getAllEmployee(Director,EmployeeBuilder)
++ {static} ArrayList<Table> getAllTable(Director,TableBuilder)
++ {static} ArrayList<Reserve> getAllReserve(Director,ReserveBuilder,ArrayList<Table>)
++ {static} ArrayList<Check> getAllChecks(Director,CheckBuilder,ArrayList<Table>,ArrayList<Employee>,ArrayList<Dish>)
++ {static} ArrayList<Dish> filterDish(ArrayList<Dish>,ArrayList<Integer>,int)
+}
+class main.java.serverPart.Specification.AndSpecification {
+- Set<Specification<T>> set
++ boolean isSatisfiedBy(T)
++ AbstractSpecification<T> and(Specification<T>)
+}
+class main.java.serverPart.dataBase.Request {
+- String request
++ Object exec()
+- String get_type(String)
+}
+interface main.java.serverPart.dataBase.Request.HandlerRequest {
++ void setNext(HandlerRequest)
++ Object handler(String,String)
+}
+class main.java.serverPart.dataBase.Request.BasicRequest {
++ HandlerRequest next
++ void setNext(HandlerRequest)
++ Object handler(String,String)
+}
+class main.java.serverPart.dataBase.Request.GetRequest {
++ Object handler(String,String)
+}
+class main.java.serverPart.dataBase.Request.InsertRequest {
++ Object handler(String,String)
+}
+class main.java.serverPart.dataBase.Request.UpdateRequest {
++ Object handler(String,String)
+}
+class main.java.serverPart.dataBase.Request.DeleteRequest {
++ Object handler(String,String)
+}
+interface main.java.serverPart.Specification.Specification {
++ boolean isSatisfiedBy(T)
+}
+class main.java.serverPart.specificationConcret.ReserveSpecification {
+~ String date
++ boolean isSatisfiedBy(Reserve)
+}
+interface main.java.serverPart.BuilderPart.Builder {
++ void reset()
++ void setId(int)
++ void setName(String)
++ void setStatus(String)
++ void setDescription(String)
++ void setDate(String)
++ void setTable(ArrayList<Table>)
++ void setProduct(ArrayList<Product>)
++ void setDish(ArrayList<Dish>)
++ void setMenu(ArrayList<Menu>)
++ void setChecks(ArrayList<Check>)
++ void setReserve(ArrayList<Reserve>)
++ void setEmployee(ArrayList<Employee>)
++ void setPersonalData(String,String,String)
++ void setFloat(Float)
++ void setInt(int)
+}
+class main.java.serverPart.Objects.Table {
++ int id
++ String status_in_moment
++ String description
++ int sit
++ String from
+}
+class main.java.serverPart.Objects.Employee {
++ int id
++ String full_name
++ String phone_number
++ String email
++ String position
++ String password
+}
+class main.java.serverPart.tables.SupFirst {
++ ArrayList<Table> return_all_list()
++ Table return_details(int)
+- ArrayList<OneTable> create_list()
+}
+
+
+main.java.serverPart.BuilderPart.Builder <|.. main.java.serverPart.BuilderPart.ProductBuilder
+main.java.serverPart.Specification.AbstractSpecification <|-- main.java.serverPart.Specification.NotSpecification
+main.java.serverPart.Specification.AbstractSpecification <|-- main.java.serverPart.specificationConcret.DoneStatusCheckSpecification
+main.java.serverPart.BuilderPart.Builder <|.. main.java.serverPart.BuilderPart.CheckBuilder
+main.java.serverPart.BuilderPart.Builder <|.. main.java.serverPart.BuilderPart.EmployeeBuilder
+main.java.serverPart.Specification.AbstractSpecification <|-- main.java.serverPart.specificationConcret.FreeTableScecification
+main.java.serverPart.Specification.AbstractSpecification <|-- main.java.serverPart.Specification.OrSpecification
+main.java.serverPart.BuilderPart.Director +.. main.java.serverPart.BuilderPart.Director.InnerData
+main.java.serverPart.Specification.AbstractSpecification <|-- main.java.serverPart.specificationConcret.NotOkProductSpecification
+main.java.serverPart.BuilderPart.Builder <|.. main.java.serverPart.BuilderPart.RestoranBuilder
+main.java.serverPart.BuilderPart.Builder <|.. main.java.serverPart.BuilderPart.ReserveBuilder
+main.java.serverPart.BuilderPart.Builder <|.. main.java.serverPart.BuilderPart.TableBuilder
+main.java.serverPart.Specification.Specification <|.. main.java.serverPart.Specification.AbstractSpecification
+main.java.serverPart.BuilderPart.Builder <|.. main.java.serverPart.BuilderPart.MenuBuilder
+main.java.serverPart.Specification.AbstractSpecification <|-- main.java.serverPart.specificationConcret.ProductInNextMenuSpecification
+main.java.serverPart.Specification.AbstractSpecification <|-- main.java.serverPart.specificationConcret.MenuSpecification
+main.java.serverPart.Handlers.Handlers +.. main.java.serverPart.Handlers.Handlers.PriceListHandler
+main.java.serverPart.Handlers.HttpHandler <|.. main.java.serverPart.Handlers.Handlers.PriceListHandler
+main.java.serverPart.Handlers.Handlers +.. main.java.serverPart.Handlers.Handlers.DetailsHandler
+main.java.serverPart.Handlers.HttpHandler <|.. main.java.serverPart.Handlers.Handlers.DetailsHandler
+main.java.serverPart.Handlers.Handlers +.. main.java.serverPart.Handlers.Handlers.SearchHandler
+main.java.serverPart.Handlers.HttpHandler <|.. main.java.serverPart.Handlers.Handlers.SearchHandler
+main.java.serverPart.Handlers.Handlers +.. main.java.serverPart.Handlers.Handlers.LoginHandler
+main.java.serverPart.Handlers.HttpHandler <|.. main.java.serverPart.Handlers.Handlers.LoginHandler
+main.java.serverPart.Handlers.Handlers +.. main.java.serverPart.Handlers.Handlers.RegisterHandler
+main.java.serverPart.Handlers.HttpHandler <|.. main.java.serverPart.Handlers.Handlers.RegisterHandler
+main.java.serverPart.Handlers.Handlers +.. main.java.serverPart.Handlers.Handlers.TableHandler
+main.java.serverPart.Handlers.HttpHandler <|.. main.java.serverPart.Handlers.Handlers.TableHandler
+main.java.serverPart.Handlers.Handlers +.. main.java.serverPart.Handlers.Handlers.DishHandler
+main.java.serverPart.Handlers.HttpHandler <|.. main.java.serverPart.Handlers.Handlers.DishHandler
+main.java.serverPart.Handlers.Handlers +.. main.java.serverPart.Handlers.Handlers.ChecksHandler
+main.java.serverPart.Handlers.HttpHandler <|.. main.java.serverPart.Handlers.Handlers.ChecksHandler
+main.java.serverPart.Handlers.Handlers +.. main.java.serverPart.Handlers.Handlers.ReserveHandler
+main.java.serverPart.Handlers.HttpHandler <|.. main.java.serverPart.Handlers.Handlers.ReserveHandler
+main.java.serverPart.Handlers.Handlers +.. main.java.serverPart.Handlers.Handlers.ReserveSetHandler
+main.java.serverPart.Handlers.HttpHandler <|.. main.java.serverPart.Handlers.Handlers.ReserveSetHandler
+main.java.serverPart.Handlers.Handlers +.. main.java.serverPart.Handlers.Handlers.ProductHandler
+main.java.serverPart.Handlers.HttpHandler <|.. main.java.serverPart.Handlers.Handlers.ProductHandler
+main.java.serverPart.Handlers.Handlers +.. main.java.serverPart.Handlers.Handlers.ProductListHandler
+main.java.serverPart.Handlers.HttpHandler <|.. main.java.serverPart.Handlers.Handlers.ProductListHandler
+main.java.serverPart.Handlers.Handlers +.. main.java.serverPart.Handlers.Handlers.ReserveNextHandler
+main.java.serverPart.Handlers.HttpHandler <|.. main.java.serverPart.Handlers.Handlers.ReserveNextHandler
+main.java.serverPart.Handlers.Handlers +.. main.java.serverPart.Handlers.Handlers.DayBillsHandler
+main.java.serverPart.Handlers.HttpHandler <|.. main.java.serverPart.Handlers.Handlers.DayBillsHandler
+main.java.serverPart.Handlers.Handlers +.. main.java.serverPart.Handlers.Handlers.MenuHandler
+main.java.serverPart.Handlers.HttpHandler <|.. main.java.serverPart.Handlers.Handlers.MenuHandler
+main.java.serverPart.Specification.AbstractSpecification <|-- main.java.serverPart.specificationConcret.CheksDateSpecification
+main.java.serverPart.Specification.AbstractSpecification <|-- main.java.serverPart.specificationConcret.WitersChecksSpecification
+main.java.serverPart.BuilderPart.Builder <|.. main.java.serverPart.BuilderPart.DishBuilder
+main.java.serverPart.Facade +.. main.java.serverPart.Facade.RestoranFacade
+main.java.serverPart.Specification.AbstractSpecification <|-- main.java.serverPart.Specification.AndSpecification
+main.java.serverPart.dataBase.Request +.. main.java.serverPart.dataBase.Request.HandlerRequest
+main.java.serverPart.dataBase.Request +.. main.java.serverPart.dataBase.Request.BasicRequest
+main.java.serverPart.dataBase.HandlerRequest <|.. main.java.serverPart.dataBase.Request.BasicRequest
+main.java.serverPart.dataBase.Request +.. main.java.serverPart.dataBase.Request.GetRequest
+main.java.serverPart.dataBase.BasicRequest <|-- main.java.serverPart.dataBase.Request.GetRequest
+main.java.serverPart.dataBase.Request +.. main.java.serverPart.dataBase.Request.InsertRequest
+main.java.serverPart.dataBase.BasicRequest <|-- main.java.serverPart.dataBase.Request.InsertRequest
+main.java.serverPart.dataBase.Request +.. main.java.serverPart.dataBase.Request.UpdateRequest
+main.java.serverPart.dataBase.BasicRequest <|-- main.java.serverPart.dataBase.Request.UpdateRequest
+main.java.serverPart.dataBase.Request +.. main.java.serverPart.dataBase.Request.DeleteRequest
+main.java.serverPart.dataBase.BasicRequest <|-- main.java.serverPart.dataBase.Request.DeleteRequest
+main.java.serverPart.Specification.AbstractSpecification <|-- main.java.serverPart.specificationConcret.ReserveSpecification
+@enduml
