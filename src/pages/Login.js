@@ -14,10 +14,10 @@ class Login extends Component{
     login(event){
         try{
             console.log("try")
-            fetch("http://localhost:5000/login?query="+this.state.email, {method: 'GET'})
+            fetch("http://localhost:5000/login?query="+this.state.email+"&"+this.state.password, {method: 'GET'})
                 .then(res => res.json()).then(el =>{
-                    console.log(el.position, el.id)
-                    if (el.password === this.state.password) {
+                    if (el != null) {
+                        console.log(el.position, el.id)
                         localStorage.setItem("login", el.position);
                         localStorage.setItem("id", el.id);
                         alert("You connect like "+el.position);

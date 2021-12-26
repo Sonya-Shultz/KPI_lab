@@ -21,14 +21,15 @@ class CreateReserve extends Component{
 
     submit(event){
         if (this.state.table_id != null){
-            try{
-            fetch("http://localhost:5000/reserveSet", {method: 'POST', headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Headers': 'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers'
-            },
-                body: JSON.stringify(this.state)
-            }).then(el => alert("Reserve complite"))}
-            catch(e){alert("Cant reserve table ("+e.toString())}
+            if (this.state.special_description == "Sec sup"){
+                compSecFetch(0, this.state)
+            }
+            else if (this.state.special_description == "First sup"){
+                compFrFetch(0,this.state)
+            }
+            else {
+                myCompFetch(0,this.state)
+            }
         }
         else alert("Chose table first!")
         event.preventDefault();
@@ -40,10 +41,10 @@ class CreateReserve extends Component{
                 <div id="root" >
                     <h3>You table is </h3><p >{this.state.table_id}</p>
                     {this.state.data.map(el => (
-                        <p key={el.id+el.from}>{"Number: "+el.id+", status: "+el.status_in_moment+", people can sit: "+el.sit+", from "+el.from+", description: "+el.description}</p>
+                        <p key={el.id+el.from+Math.random()}>{"Number: "+el.id+", status: "+el.status_in_moment+", people can sit: "+el.sit+", from "+el.from+", description: "+el.description}</p>
                     ))}
                     {this.state.data.map(el => (
-                        <button key={el.id} onClick={(e)=>{this.setState({table_id: el.id}); console.log(el.id)}}>{"Number: "+el.id+" set reserve"}</button>
+                        <button key={el.id+el.from+Math.random()} onClick={(e)=>{this.setState({table_id: el.id});this.setState({special_description: el.from}); console.log(el.id+" "+el.from)}}>{"Number: "+el.id+" from "+el.from}</button>
                     ))}
                     <form onSubmit={this.submit}>
                         <label>
@@ -53,10 +54,6 @@ class CreateReserve extends Component{
                         <label>
                             Full Name:
                             <input type="text" value={this.state.full_name} onChange={(e)=>{this.setState({full_name: e.currentTarget.value})}} />
-                        </label>
-                        <label>
-                            Special description:
-                            <input type="text" value={this.state.special_description} onChange={(e)=>{this.setState({special_description: e.currentTarget.value})}} />
                         </label>
                         <label>
                             Time along:
@@ -74,8 +71,47 @@ class CreateReserve extends Component{
         else{
             return(<div id="root"><h3>Incorrect number</h3></div>)
         }
-
     }
+}
+function myCompFetch(t, tstate){
+    try{
+        console.log(t)
+        if (t > 10) {alert("Reserve cant be complete (((((((((");return;}
+        t = t+1;
+        fetch("http://localhost:5000/reserveSet", {method: 'POST', headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Headers': 'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers'
+        },
+            body: JSON.stringify(tstate)
+        }).then(el => alert("Reserve complite")).catch(el => myCompFetch(t, tstate))}
+        catch(e){
+        myCompFetch(t, tstate);
+        }
+    }
+
+function  compFrFetch(t,tstate){
+    try{
+        if (t > 10) {alert("Reserve cant be complete (((((((((");return;}
+        t = t+1;
+        fetch("http://localhost:5005/reserves", {method: 'POST', headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Headers': 'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers'
+        },
+            body: JSON.stringify(tstate)
+        }).then(el => alert("Reserve complite")).catch(el => compFrFetch(t, tstate))}
+        catch(e){ compFrFetch(t, tstate);}
+}
+function compSecFetch(t,tstate){
+    try{
+        if (t > 10){alert("Reserve cant be complete (((((((((");return;}
+        t = t+1;
+        fetch("http://localhost:5010/reserves", {method: 'POST', headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Headers': 'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers'
+        },
+            body: JSON.stringify(tstate)
+        }).then(el => alert("Reserve complite")).catch(el => compSecFetch(t, tstate))}
+        catch(e){ compSecFetch(t, tstate);}
 }
 
 export default CreateReserve;

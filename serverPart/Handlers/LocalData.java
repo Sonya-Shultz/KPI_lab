@@ -6,17 +6,126 @@ import main.java.serverPart.dataBase.*;
 import main.java.serverPart.specificationConcret.*;
 import main.java.serverPart.Specification.*;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Map;
 
 public class LocalData {
+    public static ArrayList<Table> getTable(String req){
+        ArrayList<Table> all_data = new ArrayList<>();
+        TableBuilder tb = new TableBuilder();
+        Director director = new Director(tb);
+        ArrayList<Object> data = Helper.getArrListFromJSON(req);
+        ArrayList<Map<String,Object>> a = new ArrayList<>();
+        data.forEach(el -> {a.add((Map<String,Object>) el);});
+        a.forEach(
+                el -> {
+                    director.innerData.name = (String)el.get("from");
+                    director.innerData.id = (Integer)el.get("id");
+                    director.innerData.status = (String)el.get("status_in_moment");
+                    director.innerData.desc = (String)el.get("description");
+                    director.innerData.amountI = (Integer)el.get("sit");
+                    director.make("table");
+                    all_data.add(tb.getResult());
+                }
+        );
+        return all_data;
+    }
+
+    public static void getAllSuplReserve(){
+        Facade.firstSup.reserves = new ArrayList<>();
+        try{
+            URL url = new URL("http://localhost:5005/reserves");
+
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+
+            StringBuilder data = new StringBuilder();
+            try (BufferedReader in = new BufferedReader(
+                    new InputStreamReader(connection.getInputStream()))) {
+                String line;
+                while ((line = in.readLine()) != null) {
+                    data.append(line);
+                }
+            }
+            Facade.firstSup.reserves = LocalData.getUrlReserve(String.valueOf(data));
+        } catch (Exception e){e.printStackTrace();}
+        Facade.secSup.reserves = new ArrayList<>();
+        try{
+            URL url = new URL("http://localhost:5010/reserves");
+
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+
+            StringBuilder data = new StringBuilder();
+            try (BufferedReader in = new BufferedReader(
+                    new InputStreamReader(connection.getInputStream()))) {
+                String line;
+                while ((line = in.readLine()) != null) {
+                    data.append(line);
+                }
+            }
+            Facade.secSup.reserves = LocalData.getUrlReserve(String.valueOf(data));
+        } catch (Exception e){e.printStackTrace();}
+    }
+    public static ArrayList<Reserve> getUrlReserve(String req){
+        ArrayList<Reserve> all_data = new ArrayList<>();
+        ReserveBuilder tb = new ReserveBuilder();
+        Director director = new Director(tb);
+        ArrayList<Object> data = Helper.getArrListFromJSON(req);
+        ArrayList<Map<String,Object>> a = new ArrayList<>();
+        data.forEach(el -> {a.add((Map<String,Object>) el);});
+        a.forEach(
+                el -> {
+                    director.innerData.id = (Integer) el.get("id");
+                    director.innerData.name = (String) el.get("full_name");
+                    director.innerData.phone = (String)el.get("phone");
+                    director.innerData.date = (String) el.get("date_time");
+                    director.innerData.status = (String)el.get("time_along");
+                    director.innerData.desc = (String)el.get("special_description");
+                    Map<String,Object> table_h = (Map<String,Object>) el.get("table");
+
+                    /*ArrayList<Map<String,Object>> table_ha = new ArrayList<>();
+                    data.forEach(elem -> {table_ha.add((Map<String,Object>) elem);});
+                    Map<String,Object> table_hh = table_ha.get(0);*/
+                    ArrayList<Table> tab = new ArrayList<>();
+                    if (director.innerData.desc.equals("First sup")) {
+                        for (int i = 0; i < Facade.firstSup.tables.size(); i++) {
+                            if (Facade.firstSup.tables.get(i).id == ((Integer)table_h.get("id"))) {
+                                tab.add(Facade.firstSup.tables.get(i));
+                                break;
+                            }
+                        }
+                    } else if (director.innerData.desc.equals("Sec sup")){
+                        for (int i = 0; i < Facade.secSup.tables.size(); i++) {
+                            if (Facade.secSup.tables.get(i).id == ((Integer)table_h.get("id"))) {
+                                tab.add(Facade.secSup.tables.get(i));
+                                break;
+                            }
+                        }
+                    }
+                    director.innerData.table = tab;
+                    director.make("reserve");
+                    all_data.add(tb.getResult());
+                }
+        );
+        return all_data;
+    }
+
     public static ArrayList<Employee> getEmploye(String request, Restoran rest){
         ArrayList<Employee> all_data = new ArrayList<>();
+        String pass = request.split("&")[1].replaceAll("&", "");
+        String email = request.split("&")[0].replaceAll("&", "");
         try{
             for (int i=0; i< rest.all_employees.size(); i++){
-                if (rest.all_employees.get(i).email.equals(request)){
+                System.out.println(rest.all_employees.get(i).password+" "+pass);
+                System.out.println(rest.all_employees.get(i).email+" "+email);
+                if (rest.all_employees.get(i).email.equals(email) && rest.all_employees.get(i).password.equals(pass)){
                     all_data.add(rest.all_employees.get(i));
                     break;
                 }
@@ -62,7 +171,7 @@ public class LocalData {
     public static ArrayList<Reserve> getReserve(Restoran rest){
         ArrayList<Reserve> all_data = new ArrayList<>();
         try{
-            all_data = rest.all_reserves;
+            all_data.addAll(rest.all_reserves);
         }
         catch(Exception e){
             System.out.println("not find in local DB");
@@ -82,7 +191,21 @@ public class LocalData {
     public static ArrayList<Table> getFreeTable(String query, Restoran rest){
         ArrayList<Table> tab = new ArrayList<>();
         Specification<Table> tabS = new FreeTableScecification(rest.all_reserves, query);
-        tab = applySpecified(rest.all_tables, tabS);
+        ArrayList<Table> tab1 = new ArrayList<>();
+        tab1.addAll(applySpecified(rest.all_tables, tabS).subList(0,2000));
+        tab.addAll(tab1);
+        if (Facade.firstSup.reserves != null && Facade.firstSup.tables!= null){
+            ArrayList<Table> tab2 = new ArrayList<>();
+            Specification<Table> tabS2 = new FreeTableScecification(Facade.firstSup.reserves, query);
+            tab2.addAll(applySpecified(Facade.firstSup.tables, tabS2).subList(0,2000));
+            tab.addAll(tab2);
+        }
+        if (Facade.secSup.reserves != null && Facade.secSup.tables!= null){
+            ArrayList<Table> tab3 = new ArrayList<>();
+            Specification<Table> tabS3 = new FreeTableScecification(Facade.secSup.reserves, query);
+            tab3.addAll(applySpecified(Facade.secSup.tables, tabS3).subList(0,2000));
+            tab.addAll(tab3);
+        }
         return tab;
     }
     public static ArrayList<Product> getAllProducts(Restoran rest){
@@ -159,8 +282,10 @@ public class LocalData {
             Map<String,Object>res = Helper.getFromJSON(query);
 
             int res_id = (Integer) res.get("id");
+            String spec = (String) res.get("special_description");
+            System.out.println(res_id+" "+spec);
             Request re = new Request("DELETE FROM Reserve WHERE id = "+res_id+";");
-            rest.all_reserves.removeIf(el -> {return el.id == res_id;});
+            rest.all_reserves.removeIf(el -> {return el.id == res_id && el.special_description.equals(spec);});
             String response = (String)re.exec();
             return response;
         }
@@ -179,7 +304,6 @@ public class LocalData {
 
         ReserveBuilder rb = new ReserveBuilder();
         Director director = new Director(rb);
-        director.innerData.name = "MyComp";
 
         director.innerData.name = (String) res.get("full_name");
         director.innerData.phone = (String)res.get("phone");
@@ -192,9 +316,13 @@ public class LocalData {
         
         director.make("reserve");
         Reserve reserves = rb.getResult();
-        
-        Request re = new Request("INSERT INTO Reserve VALUES ("+(Integer)res.get("table_id")+",'"+reserves.date_time.toString()+"','"+reserves.time_along+"','"+reserves.phone+"','"+reserves.full_name+"','"+reserves.special_description+"');");
-        String response = (String)re.exec();
+
+        String response = "";
+
+        if (reserves.special_description.equals("MyComp")){
+            Request re = new Request("INSERT INTO Reserve VALUES ("+(Integer)res.get("table_id")+",'"+reserves.date_time.toString()+"','"+reserves.time_along+"','"+reserves.phone+"','"+reserves.full_name+"','"+reserves.special_description+"');");
+            response = (String)re.exec();
+        }
         Facade.rest = Facade.setRestoran();
         return response;
     }
@@ -346,7 +474,6 @@ public class LocalData {
     static <T> ArrayList<T> applySpecified(ArrayList<T> set, Specification<T> spec) {
 		ArrayList<T> data = new ArrayList<>();
         for(T t : set) {
-            System.out.println(t);
 			if( spec.isSatisfiedBy(t) ) {
 				data.add(t);
 			}

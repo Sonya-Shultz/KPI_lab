@@ -1,6 +1,10 @@
 package main.java.serverPart.Handlers;
 
 import java.io.*;
+import java.lang.reflect.Executable;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,7 +82,12 @@ public class Handlers{
             try{
                 String requestParamValue=null;
                 requestParamValue = Helper.handleGetRequest(t);
-                Employee data = LocalData.getEmploye(requestParamValue, Facade.rest).get(0);
+                ArrayList<Employee> e = LocalData.getEmploye(requestParamValue, Facade.rest);
+                Employee data = new Employee();
+                data.position = "gest";
+                data.id = -1;
+                if (e.size()>0){
+                    data = LocalData.getEmploye(requestParamValue, Facade.rest).get(0);}
                 Helper.handleResponce(t,data);
                 DataBase.closeConnection();
             }catch(Exception e){
@@ -118,13 +127,52 @@ public class Handlers{
                 ArrayList<Table> all_data = new ArrayList<>();
                 all_data.addAll(LocalData.getallTables(Facade.rest));
 
-                SupFirst ans1 = new SupFirst();
-                List<Table> data = ans1.return_all_list();
-                all_data.addAll(data);
 
-                SupSec ans2 = new SupSec();
-                data = ans2.return_all_list("");
-                all_data.addAll(data);
+                if (Facade.firstSup.tables == null){
+                    Facade.firstSup.tables = new ArrayList<>();
+                        try{
+                        URL url = new URL("http://localhost:5005/tables");
+
+                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                        connection.setRequestMethod("GET");
+
+                        StringBuilder data = new StringBuilder();
+                        try (BufferedReader in = new BufferedReader(
+                                new InputStreamReader(connection.getInputStream()))) {
+                            String line;
+                            while ((line = in.readLine()) != null) {
+                                data.append(line);
+                            }
+                        }
+                        Facade.firstSup.tables = LocalData.getTable(String.valueOf(data));
+                    } catch (Exception e){e.printStackTrace();}
+                }
+                if (Facade.firstSup.tables != null)
+                    all_data.addAll(Facade.firstSup.tables);
+
+                if (Facade.secSup.tables == null){
+                    Facade.secSup.tables = new ArrayList<>();
+                    try{
+                    for (int i=1; i<6; i++) {
+                        URL url = new URL("http://localhost:5010/tables?p="+i);
+
+                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                        connection.setRequestMethod("GET");
+
+                        StringBuilder data = new StringBuilder();
+                        try (BufferedReader in = new BufferedReader(
+                                new InputStreamReader(connection.getInputStream()))) {
+                            String line;
+                            while ((line = in.readLine()) != null) {
+                                data.append(line);
+                            }
+                        }
+                        Facade.secSup.tables.addAll(LocalData.getTable(String.valueOf(data)));
+                    }} catch (Exception e){e.printStackTrace();}
+
+                }
+                if (Facade.secSup.tables != null)
+                    all_data.addAll(Facade.secSup.tables);
 
                 Helper.handleResponce(t,all_data);
                 DataBase.closeConnection();
@@ -207,6 +255,7 @@ public class Handlers{
     public static class ReserveHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange t) throws IOException {
+            //LocalData.getAllSuplReserve();
             t.getResponseHeaders().add("Access-Control-Allow-Headers","Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
             t.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
             
@@ -214,6 +263,9 @@ public class Handlers{
             if("GET".equals(t.getRequestMethod())){
                 try{
                     ArrayList<Reserve> all_data =  LocalData.getReserve(Facade.rest);
+                    LocalData.getAllSuplReserve();
+                    all_data.addAll(Facade.firstSup.reserves);
+                    all_data.addAll(Facade.secSup.reserves);
                     Helper.handleResponce(t,all_data);
                     DataBase.closeConnection();
                 }catch(Exception e){
@@ -222,6 +274,7 @@ public class Handlers{
             }
             else if("DELETE".equals(t.getRequestMethod())){
                 try{
+                    LocalData.getAllSuplReserve();
                     String all_data =  LocalData.deleteReserve(Facade.rest, query);
                     Helper.handleResponce(t,all_data);
                     DataBase.closeConnection();
@@ -236,6 +289,8 @@ public class Handlers{
     public static class ReserveSetHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange t) throws IOException {
+            if (Facade.firstSup.reserves==null ||Facade.secSup.reserves==null)
+                LocalData.getAllSuplReserve();
             //t.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
             t.getResponseHeaders().add("Access-Control-Allow-Headers","Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
             if("GET".equals(t.getRequestMethod())){

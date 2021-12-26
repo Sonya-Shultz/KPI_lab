@@ -19,7 +19,8 @@ public class FreeTableScecification extends AbstractSpecification<Table> {
 	@Override
 	public boolean isSatisfiedBy(Table t) {
         for (int i=0; i<this.reserve.size(); i++){
-            if (this.reserve.get(i).id==t.id && this.reserve.get(i).date_time.substring(0, 10).equals(this.date))
+            if (this.reserve.get(i).id==t.id && this.reserve.get(i).date_time.substring(0, 10).equals(this.date) &&
+            this.reserve.get(i).special_description.equals(t.from))
                 return false;
         }
         return true;

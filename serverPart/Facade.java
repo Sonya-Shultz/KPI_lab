@@ -1,5 +1,6 @@
 package main.java.serverPart;
 import java.net.InetSocketAddress;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
@@ -8,13 +9,31 @@ import com.sun.net.httpserver.HttpServer;
 import main.java.serverPart.dataBase.DataBase;
 import main.java.serverPart.dataBase.Request;
 import main.java.serverPart.Handlers.Handlers;
+import main.java.serverPart.HandlersFilter.*;
 import main.java.serverPart.Objects.*;
 import main.java.serverPart.BuilderPart.*;
+import main.java.serverPart.tables.ExternalSup;
 
 public class Facade {
     public static Restoran rest;
+    public static Date lastUpdateDate;
+    public static ExternalSup firstSup;
+    public static ExternalSup secSup;
+
     public static void setDBConnection(){DataBase.connectDB();}
     public static Restoran setRestoran(){return RestoranFacade.setRestoranData();}
+    public static void StartFilterServer(String name, int port){
+        try {
+            InetSocketAddress address = new InetSocketAddress(name, port);
+            HttpServer httpServer = HttpServer.create(address, 0);
+
+            httpServer.createContext("/filterAll", new HandlersFilter.AllTableHandler());
+
+            httpServer.setExecutor(null); // creates a default executor
+            httpServer.start();
+            System.out.println("Create HTTP server on port 5015");
+        }catch(Exception e){e.printStackTrace();}
+    }
     public static void StartServer(String name, int port, Restoran rest){
         try {
             InetSocketAddress address = new InetSocketAddress(name, port);
@@ -35,6 +54,7 @@ public class Facade {
             httpServer.createContext("/productList", new Handlers.ProductListHandler());
             httpServer.createContext("/reserveNext", new Handlers.ReserveNextHandler());
             httpServer.createContext("/dayBills", new Handlers.DayBillsHandler());
+
 
             httpServer.setExecutor(null); // creates a default executor
             httpServer.start();
